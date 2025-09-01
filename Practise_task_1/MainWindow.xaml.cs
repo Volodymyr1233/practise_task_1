@@ -16,9 +16,102 @@ namespace Practise_task_1
     /// </summary>
     public partial class MainWindow : Window
     {
+        private List<COper> obj_results = new List<COper>();
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (!int.TryParse(num_a.Text, out int a))
+            {
+                MessageBox.Show("Błędna pierwsza liczba");
+                return;
+            }
+
+            if (!int.TryParse(num_b.Text, out int b))
+            {
+                MessageBox.Show("Błędna druga liczba");
+                return;
+            }
+
+            if (cmb_oper.SelectedItem == null)
+            {
+                MessageBox.Show("Wybierz działanie!");
+                return;
+            }
+
+
+            string operation = cmb_oper.Text;
+            var service = new CalculateService();
+
+            int result = await service.calculateResult(a, b, operation);
+
+            COper obj_result = new COper(a, b, operation, result);
+            obj_results.Add(obj_result);
+            addObjectToGrid(result_grid, obj_result, obj_results.Count);
+        }
+
+        private void addObjectToGrid(Grid grid, COper obj_result, int i)
+        {
+            
+            
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+         
+            
+           
+            var op = obj_result;
+
+            TextBlock txtA = new TextBlock { Text = op.A.ToString(),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetRow(txtA, i);
+            Grid.SetColumn(txtA, 0);
+            grid.Children.Add(txtA);
+
+            TextBlock txtB = new TextBlock { Text = op.B.ToString(),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetRow(txtB, i );
+            Grid.SetColumn(txtB, 1);
+            grid.Children.Add(txtB);
+
+            TextBlock txtOp = new TextBlock { Text = op.Operation,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetRow(txtOp, i);
+            Grid.SetColumn(txtOp, 2);
+            grid.Children.Add(txtOp);
+
+            TextBlock txtResult = new TextBlock { Text = op.Result.ToString(),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetRow(txtResult, i);
+            Grid.SetColumn(txtResult, 3);
+            grid.Children.Add(txtResult);
+            
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            XMLConvertion.serialize_file(obj_results);
         }
     }
 }

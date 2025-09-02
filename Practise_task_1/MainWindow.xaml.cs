@@ -20,6 +20,7 @@ namespace Practise_task_1
         public MainWindow()
         {
             InitializeComponent();
+            DataBaseSQL.initializeDB();
         }
 
 
@@ -109,9 +110,40 @@ namespace Practise_task_1
             
         }
 
+        private void create_first_grid(List<COper> obj_results)
+        {
+            var rows_to_remove = result_grid.Children
+            .OfType<UIElement>()
+            .Where(e => Grid.GetRow(e) != 0)
+            .ToList();
+
+            foreach (var row_to_remove in rows_to_remove)
+            {
+                result_grid.Children.Remove(row_to_remove);
+            }
+            while (result_grid.RowDefinitions.Count > 1)
+            {
+                result_grid.RowDefinitions.RemoveAt(result_grid.RowDefinitions.Count - 1);
+            }
+            for (int i = 0; i < obj_results.Count; i++)
+            {
+                addObjectToGrid(result_grid, obj_results[i], i+1);
+            }
+        }
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            XMLConvertion.serialize_file(obj_results);
+            string file_path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "results.xml");
+            XMLConvertion.serialize_file(obj_results, file_path);
+            DataBaseSQL.saveXMLFile(file_path);
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            obj_results = XMLConvertion.deserialize_file();
+            if (obj_results.Count > 0)
+            {
+                create_first_grid(obj_results);
+            }
         }
     }
 }

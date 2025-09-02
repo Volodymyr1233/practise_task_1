@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
+// i added comments for better service understanding
 namespace Practise_task_1
 {
     internal class CalculateService
